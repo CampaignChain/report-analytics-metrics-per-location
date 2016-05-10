@@ -1,0 +1,157 @@
+{#
+This file is part of the CampaignChain package.
+
+(c) CampaignChain, Inc. <info@campaignchain.com>
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+
+{% extends 'CampaignChainCoreBundle:Base:base.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ form_javascript(form) }}
+    {% javascripts '@flot_js' combine=true %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '@flot_comments_js' %}
+    <!-- flot comments --><script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '@flot_tooltip_js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ form_stylesheet(form) }}
+    {% stylesheets '@select2_css' combine=true %}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+    {% endstylesheets %}
+    {% stylesheets '@campaignchain_flot_css' filter="cssrewrite" output="media/css/*.css"
+    'bundles/campaignchaincore/css/*'%}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block body %}
+    {% javascripts '@select2_js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    <form method="GET" class="form-inline" role="form">
+        <div id="form">
+            {{ bootstrap_set_style('inline') }}
+            {{ form_row(form.campaign) }}
+            <button class="btn btn-primary" type="submit"><i class="fa fa-area-chart"></i> Show</button>
+            {{ form_rest(form) }}
+        </div>
+    </form>
+
+    {% if report_data is defined and report_data.data is iterable %}
+        {# // The series point styles available with Flot. #}
+        {% set flot_styles = { 0: 'circle', 1: 'square', 2: 'diamond', 3: 'triangle', 4:'cross' } %}
+        {% for report in report_data.data %}
+            {% include 'CampaignChainReportAnalyticsMetricsPerActivityBundle:Page:chart_header.html.twig' %}
+            <script type="text/javascript">
+                $(document).ready(function() {
+
+                    // Put milestones on top of chart
+                    var pos = $('.campaignchain-flot').position();
+                    $('.jquery-flot-comment').css({'top': 0});
+
+                {% for dimension_name,dimension in report.dimensions %}
+                    var d_{{ report.activity.getId() }}_{{ dimension.id }} = {{ dimension.data|raw }};
+                {% endfor %}
+                    $.plot("#placeholder_{{ report.activity.getId() }}", [
+                        {% for dimension_id,dimension in report.dimensions %}
+                        {
+                            label: "{{ report_data.metricNames[dimension_id]|default(dimension_id) }}",
+                            data: d_{{ report.activity.getId() }}_{{ dimension.id }},
+                            lines: { colors: "#222222", fill: false },
+                            points: { colors: '#222222' },
+                        },
+                        {% endfor %}
+                    ], {
+                        grid: {
+                            show: true,
+                            markings: [
+                                {{ markings_data|raw }}
+                            ],
+                            markingsLineWidth: 1,
+                            hoverable: true
+                        },
+                        xaxis: {
+                            mode: "time",
+                            tickSize: [7, "day"],
+                            min: (new Date('{{ campaign_data.startDate }}')).getTime(),
+                            max: (new Date('{{ campaign_data.endDate }}')).getTime(),
+                        },
+                        yaxis: {
+                            min: 0,
+                            autoscaleMargin: 0.4,
+                        },
+                        lines: {
+                            show: true
+                        },
+                        points: {
+                            show: true,
+                            radius: 3
+                        },
+                        tooltip: {
+                            show: true
+                        },
+                        tooltipOpts: {
+                            xDateFormat:    '%a, %b %e, %Y',
+                            content:        "<label>%x</label><br/>%s: %y"
+                        },
+                        comment: {
+                            show: true,
+                            notch: {
+                                size: "10px"
+                            },
+                            position: {
+                                offsetX: -21,
+                                x: function (x) {
+                                    return {
+                                        "left": x + parseFloat(this.offsetX || 0)
+                                    };
+                                },
+                            }
+                        },
+                        comments: [
+                            {{ milestone_data|raw }}
+                        ],
+                        legend: {
+                            show: true,
+                            position: "nw",
+                            noColumns: 1,
+                            placement: 'outsideGrid'
+                        }
+//                        colors: ["#31708F"],
+                    });
+
+
+                    // Brings a milestone to front when clicking on it.
+                    $('.jquery-flot-comment').click(function(e){
+                        e.stopPropagation();
+                        $(this).parent().append(this);
+                    });
+
+                    $('#placeholder_{{ report.activity.getId() }}').css('cursor', 'pointer');
+                    $('#placeholder_{{ report.activity.getId() }}').click(function(e){
+                        window.location.href = '{{ path('campaignchain_report_analytics_metrics_per_activity_activity',{'id':report.activity.getId()}) }}';
+                    });
+                });
+
+                </script>
+
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div id="placeholder_{{ report.activity.getId() }}" style="width:100%;height:300px;" class="campaignchain-flot"></div>
+                    </div>
+                </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

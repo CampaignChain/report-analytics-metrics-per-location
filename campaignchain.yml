@@ -1,0 +1,13 @@
+# This file is part of the CampaignChain package.
+#
+# (c) CampaignChain, Inc. <info@campaignchain.com>
+#
+# For the full copyright and license information, please view the LICENSE
+# file that was distributed with this source code.
+
+modules:
+    campaignchain-metrics-per-location:
+        display_name: Metrics Per Location
+        description: This report displays charts of statistics collected per location.
+        routes:
+            index: campaignchain_report_analytics_metrics_per_location_index
