@@ -13,10 +13,11 @@ file that was distributed with this source code.
     {{ parent() }}
     {{ form_javascript(form) }}
     {% javascripts '@flot_js' combine=true %}
-        <script src="{{ asset_url }}"></script>
+    <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
     {% javascripts '@flot_comments_js' %}
-    <!-- flot comments --><script src="{{ asset_url }}"></script>
+    <!-- flot comments -->
+    <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
     {% javascripts '@flot_tooltip_js' %}
     <script src="{{ asset_url }}"></script>
@@ -27,11 +28,11 @@ file that was distributed with this source code.
     {{ parent() }}
     {{ form_stylesheet(form) }}
     {% stylesheets '@select2_css' combine=true %}
-    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>
     {% endstylesheets %}
     {% stylesheets '@campaignchain_flot_css' filter="cssrewrite" output="media/css/*.css"
-    'bundles/campaignchaincore/css/*'%}
-    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+    'bundles/campaignchaincore/css/*' %}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>
     {% endstylesheets %}
 {% endblock %}
 
@@ -53,24 +54,24 @@ file that was distributed with this source code.
         {# // The series point styles available with Flot. #}
         {% set flot_styles = { 0: 'circle', 1: 'square', 2: 'diamond', 3: 'triangle', 4:'cross' } %}
         {% for report in report_data.data %}
-            {% include 'CampaignChainReportAnalyticsMetricsPerActivityBundle:Page:chart_header.html.twig' %}
+            {% include 'CampaignChainReportAnalyticsMetricsPerLocationBundle:Page:chart_header.html.twig' %}
             <script type="text/javascript">
-                $(document).ready(function() {
+                $(document).ready(function () {
 
                     // Put milestones on top of chart
                     var pos = $('.campaignchain-flot').position();
                     $('.jquery-flot-comment').css({'top': 0});
 
-                {% for dimension_name,dimension in report.dimensions %}
-                    var d_{{ report.activity.getId() }}_{{ dimension.id }} = {{ dimension.data|raw }};
-                {% endfor %}
-                    $.plot("#placeholder_{{ report.activity.getId() }}", [
+                    {% for dimension_name,dimension in report.dimensions %}
+                    var d_{{ report.location.getId() }}_{{ dimension.id }} = {{ dimension.data|raw }};
+                    {% endfor %}
+                    $.plot("#placeholder_{{ report.location.getId() }}", [
                         {% for dimension_id,dimension in report.dimensions %}
                         {
                             label: "{{ report_data.metricNames[dimension_id]|default(dimension_id) }}",
-                            data: d_{{ report.activity.getId() }}_{{ dimension.id }},
-                            lines: { colors: "#222222", fill: false },
-                            points: { colors: '#222222' },
+                            data: d_{{ report.location.getId() }}_{{ dimension.id }},
+                            lines: {colors: "#222222", fill: false},
+                            points: {colors: '#222222'}
                         },
                         {% endfor %}
                     ], {
@@ -86,11 +87,11 @@ file that was distributed with this source code.
                             mode: "time",
                             tickSize: [7, "day"],
                             min: (new Date('{{ campaign_data.startDate }}')).getTime(),
-                            max: (new Date('{{ campaign_data.endDate }}')).getTime(),
+                            max: (new Date('{{ campaign_data.endDate }}')).getTime()
                         },
                         yaxis: {
                             min: 0,
-                            autoscaleMargin: 0.4,
+                            autoscaleMargin: 0.4
                         },
                         lines: {
                             show: true
@@ -103,8 +104,8 @@ file that was distributed with this source code.
                             show: true
                         },
                         tooltipOpts: {
-                            xDateFormat:    '%a, %b %e, %Y',
-                            content:        "<label>%x</label><br/>%s: %y"
+                            xDateFormat: '%a, %b %e, %Y',
+                            content: "<label>%x</label><br/>%s: %y"
                         },
                         comment: {
                             show: true,
@@ -117,7 +118,7 @@ file that was distributed with this source code.
                                     return {
                                         "left": x + parseFloat(this.offsetX || 0)
                                     };
-                                },
+                                }
                             }
                         },
                         comments: [
@@ -134,24 +135,25 @@ file that was distributed with this source code.
 
 
                     // Brings a milestone to front when clicking on it.
-                    $('.jquery-flot-comment').click(function(e){
+                    $('.jquery-flot-comment').click(function (e) {
                         e.stopPropagation();
                         $(this).parent().append(this);
                     });
 
-                    $('#placeholder_{{ report.activity.getId() }}').css('cursor', 'pointer');
-                    $('#placeholder_{{ report.activity.getId() }}').click(function(e){
-                        window.location.href = '{{ path('campaignchain_report_analytics_metrics_per_activity_activity',{'id':report.activity.getId()}) }}';
-                    });
+                    $('#placeholder_{{ report.location.getId() }}').css('cursor', 'pointer');
+                    {#$('#placeholder_{{ report.location.getId() }}').click(function(e){#}
+                    {#window.location.href = '{{ path('campaignchain_report_analytics_metrics_per_location',{'id':report.location.getId()}) }}';#}
+//                    });
                 });
 
-                </script>
+            </script>
 
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div id="placeholder_{{ report.activity.getId() }}" style="width:100%;height:300px;" class="campaignchain-flot"></div>
-                    </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div id="placeholder_{{ report.location.getId() }}" style="width:100%;height:300px;"
+                         class="campaignchain-flot"></div>
                 </div>
+            </div>
         {% endfor %}
     {% endif %}
 {% endblock %}
