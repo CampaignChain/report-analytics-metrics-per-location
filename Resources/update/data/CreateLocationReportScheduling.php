@@ -17,7 +17,7 @@
 
 namespace CampaignChain\Report\Analytics\MetricsPerLocationBundle\Resources\update\data;
 
-use CampaignChain\DeploymentUpdateBundle\Service\DataUpdateInterface;
+use CampaignChain\UpdateBundle\Service\DataUpdateInterface;
 use CampaignChain\Location\FacebookBundle\Job\ReportFacebookPageMetrics;
 use CampaignChain\Location\TwitterBundle\Job\ReportTwitterUserMetrics;
 use Doctrine\ORM\EntityManager;
