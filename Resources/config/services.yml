@@ -23,7 +23,7 @@ services:
     campaignchain.report.analytics.update.schedule_report:
         class: CampaignChain\Report\Analytics\MetricsPerLocationBundle\Resources\update\data\CreateLocationReportScheduling
         arguments:
-            - '@doctrine.orm.default_entity_manager'
+            - '@doctrine.orm.entity_manager'
             - '@campaignchain.job.report.location.facebook'
             - '@campaignchain.job.report.location.twitter'
         tags:
