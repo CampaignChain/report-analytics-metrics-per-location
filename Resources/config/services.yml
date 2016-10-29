@@ -18,12 +18,12 @@ services:
     campaignchain.report.analytics.metrics_per_location.data:
         class: CampaignChain\Report\Analytics\MetricsPerLocationBundle\Util\Data
         arguments:
-            - '@doctrine.orm.entity_manager'
+            - '@doctrine'
             - '@campaignchain.core.serializer.default'
     campaignchain.report.analytics.update.schedule_report:
         class: CampaignChain\Report\Analytics\MetricsPerLocationBundle\Resources\update\data\CreateLocationReportScheduling
         arguments:
-            - '@doctrine.orm.entity_manager'
+            - '@doctrine'
             - '@campaignchain.job.report.location.facebook'
             - '@campaignchain.job.report.location.twitter'
         tags:

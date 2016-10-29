@@ -20,15 +20,15 @@ namespace CampaignChain\Report\Analytics\MetricsPerLocationBundle\Resources\upda
 use CampaignChain\UpdateBundle\Service\DataUpdateInterface;
 use CampaignChain\Location\FacebookBundle\Job\ReportFacebookPageMetrics;
 use CampaignChain\Location\TwitterBundle\Job\ReportTwitterUserMetrics;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CreateLocationReportScheduling implements DataUpdateInterface
 {
     /**
-     * @var EntityManager
+     * @var Registry
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @var ReportFacebookPageMetrics
@@ -42,13 +42,13 @@ class CreateLocationReportScheduling implements DataUpdateInterface
 
     /**
      * CreateLocationReportScheduling constructor.
-     * @param EntityManager $entityManager
+     * @param ManagerRegistry $managerRegistry
      * @param ReportFacebookPageMetrics $facebookPageMetrics
      * @param ReportTwitterUserMetrics $twitterUserMetrics
      */
-    public function __construct(EntityManager $entityManager, ReportFacebookPageMetrics $facebookPageMetrics, ReportTwitterUserMetrics $twitterUserMetrics)
+    public function __construct(ManagerRegistry $managerRegistry, ReportFacebookPageMetrics $facebookPageMetrics, ReportTwitterUserMetrics $twitterUserMetrics)
     {
-        $this->entityManager = $entityManager;
+        $this->em = $managerRegistry->getManager();
         $this->facebookPageMetrics = $facebookPageMetrics;
         $this->twitterUserMetrics = $twitterUserMetrics;
     }
@@ -69,7 +69,7 @@ class CreateLocationReportScheduling implements DataUpdateInterface
 
     public function execute(SymfonyStyle $io = null)
     {
-        $existingLocations = $this->entityManager
+        $existingLocations = $this->em
             ->getRepository('CampaignChainCoreBundle:Location')
             ->findAll();
 
@@ -90,7 +90,7 @@ class CreateLocationReportScheduling implements DataUpdateInterface
             }
 
             //do we have already a scheduler?
-            $existingScheduler = $this->entityManager
+            $existingScheduler = $this->em
                 ->getRepository('CampaignChainCoreBundle:SchedulerReportLocation')
                 ->findOneBy([
                     'location' => $existingLocation
@@ -106,7 +106,7 @@ class CreateLocationReportScheduling implements DataUpdateInterface
 
         }
 
-        $this->entityManager->flush();
+        $this->em->flush();
 
         return true;
     }

@@ -18,7 +18,7 @@
 namespace CampaignChain\Report\Analytics\MetricsPerLocationBundle\Util;
 
 use CampaignChain\CoreBundle\Entity\Location;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class Data
@@ -36,9 +36,9 @@ class Data
     protected $em;
     private $serializer;
 
-    public function __construct(EntityManager $em, SerializerInterface $serializer)
+    public function __construct(ManagerRegistry $managerRegistry, SerializerInterface $serializer)
     {
-        $this->em = $em;
+        $this->em = $managerRegistry->getManager();
 
         // We'll need the serializer later
         $this->serializer = $serializer;
