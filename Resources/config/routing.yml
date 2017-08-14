@@ -13,10 +13,10 @@
 # limitations under the License.
 
 campaignchain_report_analytics_metrics_per_location_index:
-    pattern:  /report/analytics/metricsperlocation/{id}
+    path:  /report/analytics/metricsperlocation/{id}
     defaults: { _controller: CampaignChainReportAnalyticsMetricsPerLocationBundle:Page:index, id: 0 }
     methods:  [GET]
 
 campaignchain_report_analytics_metrics_per_location_location:
-    pattern:  /report/analytics/metricsperlocation/location/{id}
+    path:  /report/analytics/metricsperlocation/location/{id}
     defaults: { _controller: CampaignChainReportAnalyticsMetricsPerLocationBundle:Page:location, id: 0 }
