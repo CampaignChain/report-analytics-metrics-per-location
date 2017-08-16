@@ -43,8 +43,8 @@ class PageController extends Controller
                             ->groupBy('campaign.id')
                             ->orderBy('campaign.startDate', 'ASC');
                     },
-                    'property' => 'name',
-                    'empty_value' => 'Select a Campaign',
+                    'choice_label' => 'name',
+                    'placeholder' => 'Select a Campaign',
                     'empty_data' => null,
                 ]
             )
